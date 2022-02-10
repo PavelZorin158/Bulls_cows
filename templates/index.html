@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Bulls & Cows</title>
+
+</head>
+<body>
+    <h1>Быки и коровы</h1>
+    <br>
+    <h2>
+    {% for k in keys %}
+        <a href="{{k.url}}">{{k.name}}</a>
+        <br>
+    {% endfor %}
+    </h2>
+</body>
+</html>

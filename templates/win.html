@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block win %}
+<h2>УРА!!! Вы выиграли!</h2>
+<h3>загаданное число: {{win}}</h3>
+{% endblock %}
+
+{% block content %}
+{{ super() }}
+
+<a href="kolcif">Сыграть ещё разок</a><br>
+<a href="exit">Выход</a>
+
+{% endblock %}
