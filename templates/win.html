@@ -1,14 +1,19 @@
-{% extends 'base.html' %}
-
-{% block win %}
-<h2>УРА!!! Вы выиграли!</h2>
-<h3>загаданное число: {{win}}</h3>
-{% endblock %}
+{% extends 'base_new.html' %}
 
 {% block content %}
 {{ super() }}
+{% endblock %}
 
-<a href="kolcif">Сыграть ещё разок</a><br>
-<a href="exit">Выход</a>
-
+{% block scores %}
+<h2> УРА!!! Вы выиграли c {{num}} попыток</h2>
+<h3>
+	<p><label>  загаданное число: {{win}}</label>
+	<p><label>  {{scor}} Очков</label>
+</h3>
+<br>
+<ul>
+{% for a in range(an) %}
+    <li> <b>{{ann[a]}}</b>{{ans[a]}} </li>
+{% endfor %}
+</ul>
 {% endblock %}

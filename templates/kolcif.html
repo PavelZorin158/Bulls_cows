@@ -1,13 +1,10 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <title>Boll & Cows</title>
-</head>
-<body>
-<form action="/new" method="post">
+{% extends 'base_new.html' %}
+
+{% block content %}
+{{ super() }}
+<h1>Быки и коровы</h1>
+<form action="{{ url_for('new') }}" method="post">
     <p><label>Введите количество цифр: </label> <input type="text" name="kol" value="" required />
     <p><input type="submit" value="Ok" />
 </form>
-</body>
-</html>
+{% endblock %}
