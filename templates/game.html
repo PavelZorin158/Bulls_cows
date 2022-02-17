@@ -18,9 +18,8 @@
     <p><label>попытка: {{num}}</label> <input type="text" name="number" value="{{val}}" required />
     <p><input type="submit" value="Ok" />
 </form>
-{% if win == 'YES' %}
-    <p>Поздравляю! Вы выиграли.</p>
-{% elif win == 'NO' %}
+
+{% if win == 'NO' %}
     <p>Не свезло...</p>
 {% endif %}
 {% endblock %}

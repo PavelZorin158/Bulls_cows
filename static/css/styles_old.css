@@ -17,13 +17,9 @@ a:hover {
 
 .clear {clear: both;}
 
-.header {
-	background: #3f4137;
-	height: 60px;
-}
-
 ul.mainmenu {
     list-style: none;
+    background: #3F4137;
     hieght: 60px;
     margin: 0;
     padding: 0;
@@ -41,9 +37,8 @@ ul.mainmenu li a {
     color: #fdc073;
     text-decoration: none;
 }
-
 ul.mainmenu li a:hover {
-    color: #fda83d;
+    color: #FDA83D;
 }
 
 div.content {
@@ -60,31 +55,7 @@ div.content {
 }
 
 .flash {padding: 10px;}
-.flash.success {
-    border: 1px solid #21db56;
-    background: #aeffc5;
-}
 .flash.error {
     border: 1px solid #FF4343;
     background: #FF9C9C;
-}
-
-ul.list-posts {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    max-width: 600px;
-}
-ul.list-posts li {
-    margin: 20px 0 0 0;
-    border: 1px solid #eee;
-}
-ul.list-posts .title {
-    margin: 0;
-    padding: 5px;
-    background: #eee;
-}
-ul.list-posts .annonce {
-    margin: 0;
-    padding: 10px 5px 10px 5px
 }

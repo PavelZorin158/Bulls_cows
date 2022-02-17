@@ -3,7 +3,8 @@
 введите "end" для завершения
 '''
 
-from flask import Flask, render_template, url_for, request, flash
+from flask import Flask, render_template, url_for, request, flash,\
+    session, redirect, abort
 from random import randint
 import sqlite3
 
@@ -12,8 +13,8 @@ app.config['SECRET_KEY'] = 'fghfgjhfghjghj'
 
 answers = [] # список выданных ответов
 answern = [] # список введенных цифр
-keys = [{"name": "Новая игра", "url": "kolcif"},
-        {"name": "Выход", "url": "exit"}]
+#keys = [{"name": "Новая игра", "url": "kolcif"},
+#        {"name": "Выход", "url": "exit"}]
 th_num = '' # загадонное число
 n = 0 # количество цифр
 name = 'Катя' # временное имя игрока
@@ -51,10 +52,54 @@ def index():
     return render_template('index.html', scores=scores)
 
 
-@app.route("/kolcif") # используется
-def kolcif():
-    print(url_for('kolcif'))
-    return render_template('kolcif.html')
+'''
+@app.route("/profile/<username>")
+def profile(username):
+    print('username=', username)
+    if 'userLogged' not in session or session['userLogged'] != username:
+        # проверяем, залогинен ли кто_то в сессии или вдруг кто_то умный
+        # написал в строке адрес /profile/pavel
+        abort(401)
+    return f"Профиль пользователя: {username}"
+'''
+
+
+@app.route("/login", methods=["POST", "GET"])
+def login():
+    #del session['userLogged']
+    #print('/', session.keys())
+    if 'userLogged' in session:
+        # если userLogged приыутствует в session значит пользователь залогинен в этой
+        # сессии и отправляем в profile имя пользователя из userLogged из session
+        #session['userLogged'] = 'Rick'
+        print('залогинен: '+session['userLogged'])
+        return redirect(url_for('kolcif', username=session['userLogged']))
+    elif request.method == 'POST' and request.form['username'] == 'Rick' and request.form['psw'] == "123":
+        # если совпал пароль
+        session['userLogged'] = request.form['username']
+        print('входит: '+session['userLogged'])
+        return redirect(url_for('kolcif', username=session['userLogged']))
+    elif request.method == 'POST' and (request.form['username'] != '' or request.form['psw'] != ''):
+        print('Не правельный логин или пороль')
+        flash('Не правельный логин или пороль', category='error')
+    return render_template('login.html', username='')
+
+
+@app.route("/unlogin")
+def unlogin():
+    print(url_for('unlogin'))
+    del session['userLogged']
+    return redirect(url_for('login'))
+
+@app.route("/kolcif/<username>") # используется
+def kolcif(username):
+    print(url_for('kolcif', username=session['userLogged']))
+    if 'userLogged' not in session or session['userLogged'] != username:
+        # проверяем, залогинен ли кто_то в сессии или вдруг кто_то умный
+        # написал в строке адрес /profile/pavel
+        print('фигня')
+        abort(401)
+    return render_template('kolcif.html', username=username)
 
 @app.route("/game")
 def game():
