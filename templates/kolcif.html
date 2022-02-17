@@ -2,7 +2,7 @@
 
 {% block content %}
 {{ super() }}
-<h1>{{username}}</h1>
+<h1>{{username}} : {{scor}}</h1>
 <form action="{{ url_for('unlogin') }}">
     <p><input type="submit" value="Сменить профиль" />
 </form>

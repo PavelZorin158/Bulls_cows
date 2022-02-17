@@ -21,7 +21,9 @@ name = 'Катя' # временное имя игрока
 m = []
 popytka = 0
 
-def score():
+def score(name = ''):
+    # без параметра: возвращает список картежей с результатьми игроков [('str', int), ('Катя', 2100), ...]
+    # c параметром (str) : возвращает счет игрока с именем str в виде числа int
     with sqlite3.connect("cow.db") as con:
         cur = con.cursor()
         # cur.execute("DROP TABLE IF EXISTS players") # чтоб пересоздать таблицу players
@@ -31,7 +33,12 @@ def score():
             pas TEXT NOT NULL,
             score INTEGER DEFAULT 0
             )""")
-        cur.execute("SELECT name, score FROM players")
+        if name == '':
+            cur.execute("SELECT name, score FROM players")
+        else:
+            cur.execute(f"SELECT score FROM players WHERE name = '{name}'")
+            s = cur.fetchone()
+            return s[0]
     return cur.fetchall()
 
 def add_score(name, scor):
@@ -74,10 +81,15 @@ def login():
         #session['userLogged'] = 'Rick'
         print('залогинен: '+session['userLogged'])
         return redirect(url_for('kolcif', username=session['userLogged']))
-    elif request.method == 'POST' and request.form['username'] == 'Rick' and request.form['psw'] == "123":
+    elif request.method == 'POST' and request.form['username'] == 'Павел' and request.form['psw'] == "123":
         # если совпал пароль
         session['userLogged'] = request.form['username']
         print('входит: '+session['userLogged'])
+        return redirect(url_for('kolcif', username=session['userLogged']))
+    elif request.method == 'POST' and request.form['username'] == 'Катя' and request.form['psw'] == "111":
+        # если совпал пароль
+        session['userLogged'] = request.form['username']
+        print('входит: ' + session['userLogged'])
         return redirect(url_for('kolcif', username=session['userLogged']))
     elif request.method == 'POST' and (request.form['username'] != '' or request.form['psw'] != ''):
         print('Не правельный логин или пороль')
@@ -93,13 +105,14 @@ def unlogin():
 
 @app.route("/kolcif/<username>") # используется
 def kolcif(username):
+    scor = score(username)
     print(url_for('kolcif', username=session['userLogged']))
     if 'userLogged' not in session or session['userLogged'] != username:
         # проверяем, залогинен ли кто_то в сессии или вдруг кто_то умный
         # написал в строке адрес /profile/pavel
         print('фигня')
         abort(401)
-    return render_template('kolcif.html', username=username)
+    return render_template('kolcif.html', username=username, scor=scor)
 
 @app.route("/game")
 def game():
