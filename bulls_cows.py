@@ -17,7 +17,7 @@ answern = [] # список введенных цифр
 #        {"name": "Выход", "url": "exit"}]
 th_num = '' # загадонное число
 n = 0 # количество цифр
-name = 'Катя' # временное имя игрока
+name = '' # текущее имя игрока
 m = []
 popytka = 0
 
@@ -26,13 +26,18 @@ def score(name = ''):
     # c параметром (str) : возвращает счет игрока с именем str в виде числа int
     with sqlite3.connect("cow.db") as con:
         cur = con.cursor()
-        # cur.execute("DROP TABLE IF EXISTS players") # чтоб пересоздать таблицу players
+
+        # удаляет таблицу players чтоб пересоздать ее
+        # cur.execute("DROP TABLE IF EXISTS players")
+
+        # создает таблицу players если ее нет
         cur.execute("""CREATE TABLE IF NOT EXISTS players(
             player_id INTEGER PRIMARY KEY AUTOINCREMENT,
             name TEXT NOT NULL,
             pas TEXT NOT NULL,
             score INTEGER DEFAULT 0
             )""")
+
         if name == '':
             cur.execute("SELECT name, score FROM players")
         else:
@@ -51,6 +56,12 @@ def add_score(name, scor):
         con.commit()
     return
 
+def pasword(name):
+    with sqlite3.connect("cow.db") as con:
+        cur = con.cursor()
+        cur.execute(f"SELECT pas FROM players WHERE name = '{name}'")
+        s = cur.fetchone()
+        return s[0]
 
 @app.route("/") # используется
 def index():
@@ -73,27 +84,31 @@ def profile(username):
 
 @app.route("/login", methods=["POST", "GET"])
 def login():
-    #del session['userLogged']
-    #print('/', session.keys())
+    global name
+
+    if request.method == 'POST':
+        nam = request.form['username']
+        pas = request.form['psw']
+
     if 'userLogged' in session:
         # если userLogged приыутствует в session значит пользователь залогинен в этой
         # сессии и отправляем в profile имя пользователя из userLogged из session
         #session['userLogged'] = 'Rick'
         print('залогинен: '+session['userLogged'])
+        name = session['userLogged']
         return redirect(url_for('kolcif', username=session['userLogged']))
-    elif request.method == 'POST' and request.form['username'] == 'Павел' and request.form['psw'] == "123":
+
+    elif request.method == 'POST' and pas == pasword(nam):
         # если совпал пароль
-        session['userLogged'] = request.form['username']
+        session['userLogged'] = nam
+        name = nam
         print('входит: '+session['userLogged'])
         return redirect(url_for('kolcif', username=session['userLogged']))
-    elif request.method == 'POST' and request.form['username'] == 'Катя' and request.form['psw'] == "111":
-        # если совпал пароль
-        session['userLogged'] = request.form['username']
-        print('входит: ' + session['userLogged'])
-        return redirect(url_for('kolcif', username=session['userLogged']))
+
     elif request.method == 'POST' and (request.form['username'] != '' or request.form['psw'] != ''):
         print('Не правельный логин или пороль')
         flash('Не правельный логин или пороль', category='error')
+
     return render_template('login.html', username='')
 
 
@@ -136,6 +151,7 @@ def new():
     global m
     global n
     global popytka
+
     n = int(request.form['kol'])
     zz = str(randint(0, 10 ** n - 1))
     th_num = ('0' * (n - len(zz))) + zz
@@ -155,6 +171,8 @@ def appp():
     global m
     global n
     global popytka
+    global name
+
     print(url_for('appp'))
     number = str(request.form['number'])
     print(number, th_num)
@@ -175,8 +193,9 @@ def appp():
     a = [j for j in number]
     m = [j for j in th_num]
     popytka += 1
+
     if number == th_num:
-        # ПОБЕДА
+        # ПОБЕДА TODO вывод общего счета
         scor = 1
         popytka -= 1
         for i in range(n):
@@ -187,6 +206,7 @@ def appp():
         add_score(name, scor)
         return render_template('win.html', ann =answern, ans=answers,
                                an=len(answers), num=str(popytka), win=th_num, scor=scor)
+
     # проверяем на быков
     for i in range(n):
         if a[i] == th_num[i]:
