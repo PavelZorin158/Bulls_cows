@@ -6,80 +6,26 @@
 from flask import Flask, render_template, url_for, request, flash,\
     session, redirect, abort
 from random import randint
-import sqlite3
+from cow_db import *
+
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'fghfgjhfghjghj'
 
 answers = [] # список выданных ответов
 answern = [] # список введенных цифр
-#keys = [{"name": "Новая игра", "url": "kolcif"},
-#        {"name": "Выход", "url": "exit"}]
 th_num = '' # загадонное число
 n = 0 # количество цифр
 name = '' # текущее имя игрока
 m = []
 popytka = 0
 
-def score(name = ''):
-    # без параметра: возвращает список картежей с результатьми игроков [('str', int), ('Катя', 2100), ...]
-    # c параметром (str) : возвращает счет игрока с именем str в виде числа int
-    with sqlite3.connect("cow.db") as con:
-        cur = con.cursor()
-
-        # удаляет таблицу players чтоб пересоздать ее
-        # cur.execute("DROP TABLE IF EXISTS players")
-
-        # создает таблицу players если ее нет
-        cur.execute("""CREATE TABLE IF NOT EXISTS players(
-            player_id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT NOT NULL,
-            pas TEXT NOT NULL,
-            score INTEGER DEFAULT 0
-            )""")
-
-        if name == '':
-            cur.execute("SELECT name, score FROM players")
-        else:
-            cur.execute(f"SELECT score FROM players WHERE name = '{name}'")
-            s = cur.fetchone()
-            return s[0]
-    return cur.fetchall()
-
-def add_score(name, scor):
-    with sqlite3.connect("cow.db") as con:
-        cur = con.cursor()
-        cur.execute("SELECT * FROM players")
-        for i in cur.fetchall():
-            print(i)
-        cur.execute(f"UPDATE players SET score = score + {scor} WHERE name LIKE '{name}'")
-        con.commit()
-    return
-
-def pasword(name):
-    with sqlite3.connect("cow.db") as con:
-        cur = con.cursor()
-        cur.execute(f"SELECT pas FROM players WHERE name = '{name}'")
-        s = cur.fetchone()
-        return s[0]
 
 @app.route("/") # используется
 def index():
     print(url_for('index'))
     scores = score()
     return render_template('index.html', scores=scores)
-
-
-'''
-@app.route("/profile/<username>")
-def profile(username):
-    print('username=', username)
-    if 'userLogged' not in session or session['userLogged'] != username:
-        # проверяем, залогинен ли кто_то в сессии или вдруг кто_то умный
-        # написал в строке адрес /profile/pavel
-        abort(401)
-    return f"Профиль пользователя: {username}"
-'''
 
 
 @app.route("/login", methods=["POST", "GET"])
@@ -111,6 +57,38 @@ def login():
 
     return render_template('login.html', username='')
 
+
+@app.route("/new_user", methods=["POST", "GET"])
+def new_user():
+    global name
+    print(url_for('new_user'))
+    if request.method == 'POST':
+        nam = request.form['username']
+        pas = request.form['psw']
+
+        if pasword(nam) == 'no_user':
+            # если в базе нет такого пользователя
+
+            if pas == '':
+                # если пустой пороль
+                print('введен пустой пороль')
+                flash('не введен пороль', category='error')
+                return render_template('login.html', username='')
+            else:
+                # создаем нового игрока
+                add_user(nam, pas)
+                session['userLogged'] = nam
+                name = nam
+                print('создан пользователь: ' + session['userLogged'])
+                return redirect(url_for('kolcif', username=session['userLogged']))
+
+        else:
+            # если такой пользователь уже есть
+            print('такой пользователь уже есть')
+            flash('такой пользователь уже существует', category='error')
+            return render_template('login.html', username='')
+
+    return render_template('login.html', username='')
 
 @app.route("/unlogin")
 def unlogin():
@@ -195,7 +173,7 @@ def appp():
     popytka += 1
 
     if number == th_num:
-        # ПОБЕДА TODO вывод общего счета
+        # ПОБЕДА
         scor = 1
         popytka -= 1
         for i in range(n):
@@ -204,8 +182,10 @@ def appp():
         scor = scor * (max_popyt - popytka + 1)
         print('победа '+str(scor)+' очков')
         add_score(name, scor)
+        all_score = score(name)
         return render_template('win.html', ann =answern, ans=answers,
-                               an=len(answers), num=str(popytka), win=th_num, scor=scor)
+                               an=len(answers), num=str(popytka), win=th_num, scor=scor,
+                               all_score=all_score)
 
     # проверяем на быков
     for i in range(n):
@@ -234,4 +214,4 @@ def win():
 
 
 if __name__ == "__main__":
-    app.run(host="127.0.0.1",port=5000, debug=True)
+    app.run(host="192.168.0.110",port=5000, debug=True)
