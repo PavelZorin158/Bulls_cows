@@ -33,7 +33,7 @@ ul.mainmenu {
 }
 ul.mainmenu li {
     float: left;
-    margin: 18px 40px 0 50px;
+    margin: 18px 10px 0 20px;
 }
 ul.mainmenu li.last {float: right;}
 
@@ -87,4 +87,34 @@ ul.list-posts .title {
 ul.list-posts .annonce {
     margin: 0;
     padding: 10px 5px 10px 5px
+}
+
+/* скрываем чекбоксы и блоки с содержанием */
+.hide {
+    display: none; 
+}
+.hide + label ~ div{
+    display: none;
+}
+/* оформляем текст label */
+.hide + label {
+    border-bottom: 1px dotted green;
+    padding: 0;
+    color: darkgreen;
+    cursor: pointer;
+    display: inline-block; 
+}
+/* вид текста label при активном переключателе */
+.hide:checked + label {
+    color: red;
+    border-bottom: 0;
+}
+/* когда чекбокс активен показываем блоки с содержанием  */
+.hide:checked + label + div {
+    display: block; 
+    background: #efefef;
+    -moz-box-shadow: inset 3px 3px 10px #7d8e8f;
+    -webkit-box-shadow: inset 3px 3px 10px #7d8e8f;
+    box-shadow: inset 3px 3px 10px #7d8e8f;
+    padding: 10px; 
 }
