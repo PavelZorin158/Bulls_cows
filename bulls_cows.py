@@ -9,12 +9,20 @@ from cow_db import *
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'fghfgjhfghjghj'
+MAX_CONTENT_LENGTH = 1024 * 1024
 
 
-@app.route("/")  # используется
+@app.route("/")
 def index():
-    print(url_for('index'))
     scores = score()
+    if 'userLogged' in session:
+        # если пользователь залогинен
+        if avatar(session['userLogged']) is None:
+            # у текущего пользователя нет аватарки
+            return render_template('index.html', scores=scores, username=session['userLogged'])
+        else:
+            # у текущего пользователя есть аватарка TODO отправлять аватарку в шаблон
+            return render_template('index.html', scores=scores, username=session['userLogged'])
     return render_template('index.html', scores=scores)
 
 
@@ -96,7 +104,7 @@ def unlogin():
     return redirect(url_for('login'))
 
 
-@app.route("/kolcif/<username>")  # используется
+@app.route("/kolcif/<username>")
 def kolcif(username):
     # хороший вопрос, если все данные брать из session, зачем тогда вообще
     # передавать username? так сложилось потом подумаю :)
@@ -116,7 +124,7 @@ def kolcif(username):
 #    return render_template('game.html', ann=answern, ans=answers,
 #                           an=len(answers), num=str(popytka), win='NO')
 
-@app.route("/exit")  # используется
+@app.route("/exit")
 def exit():
     print(url_for('exit'))
     del session['userLogged']
@@ -128,7 +136,12 @@ def exit():
     return render_template('exit.html')
 
 
-@app.route("/new", methods=["POST"])  # используется
+@app.route("/add_ava")
+def add_ava():
+    return render_template('add_ava.html')
+
+
+@app.route("/new", methods=["POST"])
 def new():
     print(url_for('new'))
     # НАЧАЛО НОВОЙ ИГРЫ
@@ -150,7 +163,7 @@ def new():
                            an=len(answers), num=str(popytka))
 
 
-@app.route("/appp", methods=["POST"])  # используется
+@app.route("/appp", methods=["POST"])
 def appp():
     print(url_for('appp'))
     number = str(request.form['number'])
@@ -215,4 +228,4 @@ def win():
 
 
 if __name__ == "__main__":
-    app.run(host="192.168.0.110", port=5000, debug=False)
+    app.run(host="192.168.0.110", port=5000, debug=True)

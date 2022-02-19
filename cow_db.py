@@ -49,6 +49,19 @@ def pasword(name):
         else:
             return s[0]
 
+def avatar(name):
+    # возвращает 'no_user' если в базе нет name
+    # возвращает 'no_ava' усли у пользователя нет авы
+    with sqlite3.connect("cow.db") as con:
+        cur = con.cursor()
+        cur.execute(f"SELECT avatar FROM players WHERE name = '{name}'")
+        s = cur.fetchone()
+        if s == None:
+            # пользователь name не найден в базе
+            return 'no_user'
+        else:
+            return s[0]
+
 def add_user(name, pas):
     with sqlite3.connect("cow.db") as con:
         cur = con.cursor()
