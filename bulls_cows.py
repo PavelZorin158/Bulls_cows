@@ -3,7 +3,7 @@
 """
 
 from flask import Flask, render_template, url_for, request, flash, \
-    session, redirect, abort
+    session, redirect, abort, make_response
 from random import randint
 from cow_db import *
 
@@ -17,7 +17,7 @@ def index():
     scores = score()
     if 'userLogged' in session:
         # если пользователь залогинен
-        if avatar(session['userLogged']) is None:
+        if avatar(session['userLogged']) == 'no_ava':
             # у текущего пользователя нет аватарки
             return render_template('index.html', scores=scores, username=session['userLogged'])
         else:
@@ -118,12 +118,6 @@ def kolcif(username):
     return render_template('kolcif.html', username=session['userLogged'], scor=scor)
 
 
-# @app.route("/game")
-# def game():
-#    print(url_for('game'))
-#    return render_template('game.html', ann=answern, ans=answers,
-#                           an=len(answers), num=str(popytka), win='NO')
-
 @app.route("/exit")
 def exit():
     print(url_for('exit'))
@@ -138,7 +132,19 @@ def exit():
 
 @app.route("/add_ava")
 def add_ava():
-    return render_template('add_ava.html')
+    return render_template('add_ava.html', username=session['userLogged'])
+
+@app.route("/userava")
+def userava():
+    img = None
+    try:
+        with app.open_resource(app.root_path + url_for('static', filename='images/default.png'), "rb") as f:
+            img = f.read()
+    except FileNotFoundError as e:
+        print('Не найден аватар по умолчанию: '+str(e))
+    h = make_response(img)
+    h.headers['Content-Type'] = 'image/png'
+    return h
 
 
 @app.route("/new", methods=["POST"])

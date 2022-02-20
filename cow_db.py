@@ -52,6 +52,7 @@ def pasword(name):
 def avatar(name):
     # возвращает 'no_user' если в базе нет name
     # возвращает 'no_ava' усли у пользователя нет авы
+
     with sqlite3.connect("cow.db") as con:
         cur = con.cursor()
         cur.execute(f"SELECT avatar FROM players WHERE name = '{name}'")
@@ -59,6 +60,9 @@ def avatar(name):
         if s == None:
             # пользователь name не найден в базе
             return 'no_user'
+        elif s[0] is None:
+            print('no ava')
+            return 'no_ava'
         else:
             return s[0]
 
