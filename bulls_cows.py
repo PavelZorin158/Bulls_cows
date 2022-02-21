@@ -1,6 +1,7 @@
 """
 введите "end" для завершения
 """
+import os
 
 from flask import Flask, render_template, url_for, request, flash, \
     session, redirect, abort, make_response
@@ -12,6 +13,12 @@ app.config['SECRET_KEY'] = 'fghfgjhfghjghj'
 MAX_CONTENT_LENGTH = 1024 * 1024
 
 
+def verifyExt(filename):
+    ext = filename.rsplit('.', 1)[1]
+    if ext == 'png' or ext == 'PNG':
+        return True
+    return False
+
 @app.route("/")
 def index():
     scores = score()
@@ -22,7 +29,9 @@ def index():
             return render_template('index.html', scores=scores, username=session['userLogged'])
         else:
             # у текущего пользователя есть аватарка TODO отправлять аватарку в шаблон
-            return render_template('index.html', scores=scores, username=session['userLogged'])
+            print('avatar')
+            ava = 'yes'
+            return render_template('index.html', scores=scores, username=session['userLogged'], ava=ava)
     return render_template('index.html', scores=scores)
 
 
@@ -136,16 +145,43 @@ def add_ava():
 
 @app.route("/userava")
 def userava():
-    img = None
-    try:
-        with app.open_resource(app.root_path + url_for('static', filename='images/default.png'), "rb") as f:
+    img = avatar(session['userLogged'])
+    if img == 'no_ava':
+        print('читаем дефолтную')
+        try:
+            f = open(os.path.join('static\images', 'default.png'), 'rb')
+            # Получаем бинарные данные нашего файла
             img = f.read()
-    except FileNotFoundError as e:
-        print('Не найден аватар по умолчанию: '+str(e))
+            # Конвертируем данные
+            # dat = sqlite3.Binary(img)
+            f.close()
+        except FileNotFoundError as e:
+            print('не найден аватар по умолчанию: ' + str(e))
     h = make_response(img)
-    h.headers['Content-Type'] = 'image/png'
+    #h.headers['Content-Type'] = 'image/png'
     return h
 
+
+@app.route('/upload', methods=["POST", "GET"])
+def upload():
+    if request.method == 'POST':
+        f = request.files['file']
+        if f: #and verifyExt(f.filename):
+            # если файл передался и f существует и расширение PNG
+            try:
+                img = f.read()
+                res = add_avatar(img, session['userLogged'])
+                if res == 'ok':
+                    flash("Аватар обновлен", "success")
+                else:
+                    flash("Ошибка обновления аватара", "error")
+            except FileNotFoundError as e:
+                print('Ошибка чтения файла'+str(e))
+                flash("Ошибка чтения файла", "error")
+        else:
+            flash("Ошибка обновления аватара", "error")
+
+    return redirect(url_for('add_ava'))
 
 @app.route("/new", methods=["POST"])
 def new():

@@ -21,7 +21,7 @@ def score(name = ''):
             )""")
 
         if name == '':
-            cur.execute("SELECT name, score FROM players")
+            cur.execute("SELECT name, score FROM players ORDER BY score DESC")
         else:
             cur.execute(f"SELECT score FROM players WHERE name = '{name}'")
             s = cur.fetchone()
@@ -61,10 +61,32 @@ def avatar(name):
             # пользователь name не найден в базе
             return 'no_user'
         elif s[0] is None:
+            # у пользователя нету авы
             print('no ava')
             return 'no_ava'
         else:
             return s[0]
+
+
+
+def add_avatar(img, name):
+    # возвращает 'no_user' если в базе нет name
+    if not img:
+        print('в функцию add_avatar не пришло img')
+        return 'no_img'
+    with sqlite3.connect("cow.db") as con:
+        cur = con.cursor()
+        cur.execute(f"SELECT pas FROM players WHERE name = '{name}'")
+        s = cur.fetchone()
+        if s == None:
+            # пользователь name не найден в базе
+            return 'no_user'
+        else:
+            binary = sqlite3.Binary(img)
+            cur.execute("UPDATE players SET avatar = ? WHERE name = ?", (binary, name))
+            con.commit()
+            return 'ok'
+
 
 def add_user(name, pas):
     with sqlite3.connect("cow.db") as con:

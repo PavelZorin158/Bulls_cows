@@ -4,7 +4,6 @@
 
 {{ super() }}
 <h1>Быки и коровы</h1>
-
 <input type="checkbox" id="hd-1" class="hide"/>
     <label for="hd-1" >ПРАВИЛА</label>
     <div>
@@ -15,8 +14,14 @@
  <br/>
  <br/>
 {% if ava %}
-    <p>ava</p>
-{% else %}
+    <table border="0" class="profile-table">
+    <tr><td valign="top">
+        <div class="profile-ava"><img src="{{ url_for('userava') }}"></div>
+        </td>
+        </tr>
+    </table>
+    <a href="{{url_for('add_ava')}}">Изменить аватвр</a>
+{% elif username %}
     <a href="{{url_for('add_ava')}}">Добавить аватар</a>
 {% endif %}
  <br/>
