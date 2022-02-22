@@ -28,7 +28,7 @@ def index():
             # у текущего пользователя нет аватарки
             return render_template('index.html', scores=scores, username=session['userLogged'])
         else:
-            # у текущего пользователя есть аватарка TODO отправлять аватарку в шаблон
+            # у текущего пользователя есть аватарка
             print('avatar')
             ava = 'yes'
             return render_template('index.html', scores=scores, username=session['userLogged'], ava=ava)
@@ -189,6 +189,10 @@ def new():
     # НАЧАЛО НОВОЙ ИГРЫ
 
     n = int(request.form['kol'])
+    if n > 6:
+        flash("Максимальное количество цифр 6", "error")
+        scor = score(session['userLogged'])
+        return render_template('kolcif.html', username=session['userLogged'], scor=scor)
     session['n'] = n
     zz = str(randint(0, 10 ** n - 1))
     th_num = ('0' * (n - len(zz))) + zz
@@ -270,4 +274,4 @@ def win():
 
 
 if __name__ == "__main__":
-    app.run(host="192.168.0.110", port=5000, debug=True)
+    app.run(host="192.168.0.110", port=5000, debug=False)

@@ -2,6 +2,11 @@
 
 {% block content %}
 {{ super() }}
+
+{% for cat, msg in get_flashed_messages(True) %}
+<div class="flash {{cat}}">{{msg}}</div>
+{% endfor %}
+
 <h1>{{username}} : {{scor}}</h1>
 <form action="{{ url_for('unlogin') }}">
     <p><input type="submit" value="Сменить профиль" />
