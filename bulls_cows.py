@@ -7,10 +7,13 @@ from flask import Flask, render_template, url_for, request, flash, \
     session, redirect, abort, make_response
 from random import randint
 from cow_db import *
+from admin.admin import admin
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'fghfgjhfghjghj'
-MAX_CONTENT_LENGTH = 1024 * 1024
+app.config['MAX_CONTENT_LENGTH'] = 1024 * 1024
+
+app.register_blueprint(admin, url_prefix='/admin')
 
 
 def verifyExt(filename):
