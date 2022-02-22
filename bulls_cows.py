@@ -29,7 +29,6 @@ def index():
             return render_template('index.html', scores=scores, username=session['userLogged'])
         else:
             # у текущего пользователя есть аватарка
-            print('avatar')
             ava = 'yes'
             return render_template('index.html', scores=scores, username=session['userLogged'], ava=ava)
     return render_template('index.html', scores=scores)
