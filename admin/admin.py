@@ -35,13 +35,14 @@ def login():
     return render_template('admin/login.html', title="Админ-панель")
 
 
-@admin.route('/logout', methods=["POST", "GET"])
+@admin.route('/logout')
 def logout():
     # выходит из профиля админа
     print(url_for('.logout'))
     if 'admin_logged' in session:
         session.pop('admin_logged', None)
-        del session['userLogged']
+        if 'userLogged' in session:
+            del session['userLogged']
     return redirect(url_for('.login'))
 
 @admin.route("/edit/<user>", methods=["POST", "GET"])
