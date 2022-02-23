@@ -2,4 +2,11 @@
 
 {% block content %}
 {{ super() }}
+{% if scores %}
+	<ul>
+	{% for s in scores %}
+	<li><a href="edit/{{s[0]}}">{{s[0]}} : {{s[1]}}</a></li>
+	{% endfor %}
+	</ul>
+{% endif %}
 {% endblock %}

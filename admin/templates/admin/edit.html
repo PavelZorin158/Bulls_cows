@@ -1,0 +1,35 @@
+{% extends 'admin/base_admin.html' %}
+
+{% block content %}
+{{ super() }}
+<br><br>
+{% for cat, msg in get_flashed_messages(True) %}
+<div class="flash {{cat}}">{{msg}}</div>
+{% endfor %}
+<h2>{{user}}</h2>
+<table border="0">
+	<tr><td valign="top">
+		<div class="profile-ava"><img src="{{ url_for('userava') }}"></div>
+		<div class="profile-load">
+		<form action="{{url_for('.admin_upload')}}" method="POST" enctype="multipart/form-data">
+			<p><input type="file" name="file">
+			<p><input type="submit" value="Загрузить">	
+		</form>			
+		</div>
+	</td>
+	<td valign="top" align="right">
+		<p><big>Имя:</big>
+		<p><big>Пороль:</big>
+		<p><big>Счёт:</big>
+	</td>
+	<td valign="top">
+		<form action="" method="post">
+		<p><input type="text" name="name" value={{user}} />
+		<p><input type="text" name="psw" value={{pasword}} />
+		<p><input type="text" name="scor" value={{score}} />
+		<p><input type="submit" value="Изменить">	
+		</form>				
+	</td>
+
+
+{% endblock %}

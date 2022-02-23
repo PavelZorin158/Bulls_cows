@@ -96,3 +96,24 @@ def add_user(name, pas):
         cur.execute("INSERT INTO players(name, pas) VALUES(?, ?)", new_user)
         con.commit()
     return
+
+def rename_user(name, newname):
+    with sqlite3.connect("cow.db") as con:
+        cur = con.cursor()
+        cur.execute(f"UPDATE players SET name = '{newname}' WHERE name LIKE '{name}'")
+        con.commit()
+    return
+
+def repas_user(name, newpas):
+    with sqlite3.connect("cow.db") as con:
+        cur = con.cursor()
+        cur.execute(f"UPDATE players SET pas = '{newpas}' WHERE name LIKE '{name}'")
+        con.commit()
+
+    return
+def rescor_user(name, newscore):
+    with sqlite3.connect("cow.db") as con:
+        cur = con.cursor()
+        cur.execute(f"UPDATE players SET score = {newscore} WHERE name LIKE '{name}'")
+        con.commit()
+    return
