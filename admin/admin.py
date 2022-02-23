@@ -43,7 +43,7 @@ def logout():
         session.pop('admin_logged', None)
         if 'userLogged' in session:
             del session['userLogged']
-    return redirect(url_for('.login'))
+    return redirect(url_for('index'))
 
 @admin.route("/edit/<user>", methods=["POST", "GET"])
 def edit(user):

@@ -27,6 +27,7 @@ def index():
     scores = score()
     if 'userLogged' in session:
         # если пользователь залогинен
+        print(session['userLogged'])
         if avatar(session['userLogged']) == 'no_ava':
             # у текущего пользователя нет аватарки
             return render_template('index.html', scores=scores, username=session['userLogged'])
@@ -276,4 +277,4 @@ def win():
 
 
 if __name__ == "__main__":
-    app.run(host="192.168.0.110", port=5000, debug=True)
+    app.run(host="192.168.0.110", port=5000, debug=False)

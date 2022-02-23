@@ -17,7 +17,8 @@ def score(name = ''):
             player_id INTEGER PRIMARY KEY AUTOINCREMENT,
             name TEXT NOT NULL,
             pas TEXT NOT NULL,
-            score INTEGER DEFAULT 0
+            score INTEGER DEFAULT 0,
+            avatar BLOB DEFAULT NULL
             )""")
 
         if name == '':
