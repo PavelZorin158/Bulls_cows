@@ -1,0 +1,38 @@
+{% extends 'base_new.html' %}
+
+{% block content %}
+
+{{ super() }}
+<h1>Быки и коровы</h1>
+<input type="checkbox" id="hd-1" class="hide"/>
+    <label for="hd-1" >ПРАВИЛА</label>
+    <div>
+        Нужно угадать число из указанного вами количества цифр. Компьютер сообщает в ответ, сколько цифр угадано без совпадения с их позициями (то есть количество коров) и сколько угадано вплоть до позиции (то есть количество быков).
+        <br>
+        Например: Задумано тайное число «3219».  Попытка: «2310».  Результат: две «коровы» (две цифры: «2» и «3» — угаданы на неверных позициях) и один «бык» (одна цифра «1» угадана вплоть до позиции).
+    </div>
+ <br/>
+ <br/>
+{% if ava %}
+    <table border="0" class="profile-table">
+    <tr><td valign="top">
+        <div class="profile-ava"><img src="{{ url_for('userava') }}"></div>
+        </td>
+        </tr>
+    </table>
+    <a href="{{url_for('add_ava')}}">Изменить аватвр</a>
+{% elif username %}
+    <a href="{{url_for('add_ava')}}">Добавить аватар</a>
+{% endif %}
+ <br/>
+<h2>{{username}}</h2>
+
+{% endblock %}
+{% block scores %}
+    <ul>
+    {% for scor in scores %}
+        <li> <b>{{scor[0]}}  -  </b>{{scor[1]}} </li>
+    {% endfor %}
+    </ul>
+    <p><a href="{{ url_for('admin.index') }}">Панель администратора</a></p>
+{% endblock %}
